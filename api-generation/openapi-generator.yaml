@@ -1,0 +1,13 @@
+templateDir: api-generation/templates
+additionalProperties:
+  fileNaming: kebab-case
+files:
+  service_controller.mustache:
+    templateType: API
+    destinationFilename: .controller.ts
+  api_switch.mustache:
+    templateType: API
+    destinationFilename: .api-switch.ts
+  api_index.mustache:
+    templateType: SupportingFiles
+    destinationFilename: api-index.ts

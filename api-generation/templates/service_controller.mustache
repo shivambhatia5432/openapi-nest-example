@@ -1,0 +1,26 @@
+// prettier-ignore
+import { Controller, Get, Post, Patch, Delete, Req, Put, Inject } from '@nestjs/common';
+import { {{classname}}Switch } from './{{classFilename}}.api-switch';
+
+{{#imports}}
+import { {{classname}} } from '../{{filename}}';
+{{/imports}}
+
+// prettier-ignore
+{{#operations}}
+@Controller()
+export class {{classname}}Controller {
+    constructor(@Inject('{{classname}}Switch') private readonly apiSwitch: {{classname}}Switch) {}
+{{#operation}}
+    @{{#lambda.titlecase}}{{httpMethod}}{{/lambda.titlecase}}("{{path}}")
+    {{operationId}}(
+    {{#allParams}}
+        {{#isBodyParam}}@Req() {{/isBodyParam}}{{paramName}}: {{{dataType}}}{{^-last}},{{/-last}}
+    {{/allParams}}
+    ): {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}void{{/returnType}} {
+        {{#returnType}}return {{/returnType}}this.apiSwitch.{{operationId}}({{#allParams}}{{paramName}}{{^-last}},{{/-last}}{{/allParams}});
+    }
+
+{{/operation}}
+}
+{{/operations}}

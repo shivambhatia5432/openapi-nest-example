@@ -1,0 +1,9 @@
+{{#apiInfo}}
+{{#apis}}
+{{#operations}}
+export * from './api/{{ classFilename }}.controller';
+import { {{ classname }}Controller } from './api/{{ classFilename }}.controller';
+{{/operations}}
+{{/apis}}
+export const Controllers = [{{#apis}}{{#operations}}{{ classname }}Controller{{/operations}}{{^-last}}, {{/-last}}{{/apis}}];
+{{/apiInfo}}

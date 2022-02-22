@@ -1,0 +1,18 @@
+// prettier-ignore
+{{#imports}}
+import { {{classname}} } from '../{{filename}}';
+{{/imports}}
+
+// prettier-ignore
+{{#operations}}
+export interface {{classname}}Switch {
+{{#operation}}
+    {{operationId}}(
+    {{#allParams}}
+        {{paramName}}: {{{dataType}}}{{^-last}},{{/-last}}
+    {{/allParams}}
+    ): {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}void{{/returnType}};
+
+{{/operation}}
+}
+{{/operations}}

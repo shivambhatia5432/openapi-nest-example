@@ -1,0 +1,348 @@
+swagger: "2.0"
+info:
+  description: "Social API for Slash APP"
+  version: "1.0.0"
+  title: "Social API (Node)"
+tags:
+- name: "otp"
+  description: "OTP Authentication"
+- name: "user"
+  description: "Operations about user"
+paths:
+  /otp:
+    post:
+      tags:
+      - "otp"
+      summary: "Generate and receive OTP and nonce"
+      description: "Generate and receive OTP and nonce"
+      operationId: "generateOtp"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: header
+        name: "device-id"
+        type: string
+        required: true
+      - in: header
+        name: "app-version"
+        type: number
+        required: true
+      - in: body
+        name: "body"
+        description: "This object contains user phno"
+        required: true
+        schema:
+          $ref: "#/definitions/OtpRequestBody"
+      responses:
+        "200":
+          description: "This object contains phno and nonce"
+          schema:
+            $ref: "#/definitions/OtpResponseBody"
+            
+  /otp/verify:
+    post:
+      tags:
+      - "otp"
+      summary: "Verify OTP and nonce"
+      description: "Verify OTP and nonce"
+      operationId: "verifyOtp"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: header
+        name: "device-id"
+        type: string
+        required: true
+      - in: header
+        name: "app-version"
+        type: number
+        required: true
+      - in: body
+        name: "body"
+        description: "This object contains otp and nonce"
+        required: true
+        schema:
+          $ref: "#/definitions/OtpVerifyRequestBody"
+      responses:
+        "200":
+          description: "This object contains JWTtoken that will be used as Bearer Token"
+          schema:
+            $ref: "#/definitions/OtpVerifyResponseBody"
+        
+  /user/signup:
+    post:
+      tags:
+      - "user"
+      summary: "Add user name and email"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  /user/update:
+    post:
+      tags:
+      - "user"
+      summary: "Creates list of users with given input array"
+      description: ""
+      operationId: "createUsersWithArrayInput"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "List of user object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  /user/me:
+    post:
+      tags:
+      - "user"
+      summary: "Creates list of users with given input array"
+      description: ""
+      operationId: "createUsersWithListInput"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "List of user object"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  /user/deregister:
+    get:
+      tags:
+      - "user"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "query"
+        description: "The user name for login"
+        required: true
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login in clear text"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+        "400":
+          description: "Invalid username/password supplied"
+  /user/logout:
+    get:
+      tags:
+      - "user"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "logoutUser"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by user name"
+      description: ""
+      operationId: "getUserByName"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "The name that needs to be fetched. Use user1 for testing. "
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Invalid username supplied"
+        "404":
+          description: "User not found"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: "Invalid user supplied"
+        "404":
+          description: "User not found"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "The name that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        "400":
+          description: "Invalid username supplied"
+        "404":
+          description: "User not found"
+definitions:
+  OtpRequestBody:
+    type: "object"
+    properties:
+      phno:
+        type: "string"
+    xml:
+      name: "OtpRequestBody"
+  OtpResponseBody:
+    type: "object"
+    properties:
+      phno:
+        type: "string"
+      nonce:
+        type: "string"
+    xml:
+      name: "OtpResponseBody"
+  OtpVerifyRequestBody:
+    type: "object"
+    properties:
+      phno:
+        type: "string"
+      nonce:
+        type: "string"
+      otp:
+        type: "string"
+      fcm_token:
+        type: "string"
+    xml:
+      name: "OtpVerifyRequestBody"
+  OtpVerifyResponseBody:
+    type: "object"
+    properties:
+      JWTaccessToken:
+        type: "string"
+      refresh:
+        type: "string"
+      isNewUser:
+        type: "boolean"
+      isMerchant:
+        type: "boolean"
+      user:
+        $ref: "#/definitions/User"
+    xml:
+      name: "OtpVerifyResponseBody"
+  User:
+    type: "object"
+    required: ["id", "phno", "referenceId"]
+    properties:
+      id:
+        type: "integer"
+      referenceId:
+        type: "string"
+      name:
+        type: "string"
+      slashId:
+        type: "string"
+      verifiedEmail:
+        type: "string"
+      email:
+        type: "string"
+      device:
+        type: "string"
+      phno:
+        type: "string"
+      avatar:
+        type: "string"
+      bio:
+        type: "string"
+      freshdeskRestoreId:
+        type: "string"
+      language:
+        type: "string"
+      authenticity:
+        type: "number"
+      following:
+        type: "number"
+      branchLinked:
+        type: "boolean"
+      reserved:
+        type: "boolean"
+      waitlisted:
+        type: "boolean"
+      blockReason:
+        type: "string"
+      state:
+        type: "string"
+        enum: ["ACTIVE", "PAUSED", "BLOCKED"]
+      stateUpdatedAt:
+        type: "number"
+      upiService:
+        type: "string"
+        enum: ["ENABLED", "DISABLED"]
+    xml:
+      name: "User"
