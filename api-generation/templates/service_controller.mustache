@@ -1,5 +1,5 @@
 // prettier-ignore
-import { Controller, Get, Post, Patch, Delete, Req, Put, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Put, Inject, Param, Headers, Query } from '@nestjs/common';
 import { {{classname}}Switch } from './{{classFilename}}.api-switch';
 
 {{#imports}}
@@ -8,15 +8,16 @@ import { {{classname}} } from '../{{filename}}';
 
 // prettier-ignore
 {{#operations}}
+@UseGuards(AppVersionGuard)
+@UseInterceptors(SentryInterceptor)
 @Controller()
 export class {{classname}}Controller {
     constructor(@Inject('{{classname}}Switch') private readonly apiSwitch: {{classname}}Switch) {}
 {{#operation}}
     @{{#lambda.titlecase}}{{httpMethod}}{{/lambda.titlecase}}("{{path}}")
-    {{operationId}}(
-    {{#allParams}}
-        {{#isBodyParam}}@Req() {{/isBodyParam}}{{paramName}}: {{{dataType}}}{{^-last}},{{/-last}}
-    {{/allParams}}
+    {{operationId}}({{#vendorExtensions.x-slash-request-user}}
+        @ReqUser() currentUser: User,{{/vendorExtensions.x-slash-request-user}}{{#allParams}}
+        {{#isBodyParam}}@Body() {{/isBodyParam}}{{#isPathParam}}@Param('{{paramName}}') {{/isPathParam}}{{#isHeaderParam}}@Headers('{{#lambda.lowercase}}{{baseName}}{{/lambda.lowercase}}') {{/isHeaderParam}}{{#isQueryParam}}@Query('{{baseName}}') {{/isQueryParam}}{{paramName}}: {{{dataType}}},{{/allParams}}
     ): {{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}void{{/returnType}} {
         {{#returnType}}return {{/returnType}}this.apiSwitch.{{operationId}}({{#allParams}}{{paramName}}{{^-last}},{{/-last}}{{/allParams}});
     }

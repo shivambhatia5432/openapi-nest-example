@@ -115,6 +115,7 @@ paths:
           description: "successful operation"
   /user/me:
     post:
+      x-slash-request-user: true
       tags:
       - "user"
       summary: "Creates list of users with given input array"
