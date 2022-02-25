@@ -1,5 +1,7 @@
 // prettier-ignore
 import { Controller, Get, Post, Patch, Delete, Body, Put, Inject, Param, Headers, Query } from '@nestjs/common';
+import {AuthGuard} from 'src/guards/auth.guard';
+import {ReqUser} from 'src/decorator/requser.decorator';
 import { {{classname}}Switch } from './{{classFilename}}.api-switch';
 
 {{#imports}}
@@ -8,7 +10,7 @@ import { {{classname}} } from '../{{filename}}';
 
 // prettier-ignore
 {{#operations}}
-@UseGuards(AppVersionGuard)
+@UseGuards(AppVersionGuard, AuthGuard)
 @UseInterceptors(SentryInterceptor)
 @Controller()
 export class {{classname}}Controller {

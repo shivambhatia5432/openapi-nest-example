@@ -347,3 +347,16 @@ definitions:
         enum: ["ENABLED", "DISABLED"]
     xml:
       name: "User"
+
+  MobileOTP:
+    type: "object"
+    required: ["nonce", "phno", "otp"]
+    properties:
+      nonce:
+        type: "string"
+      phno:
+        type: "string"
+      otp:
+        type: "boolean"
+    xml:
+      name: "MobileOTP"
